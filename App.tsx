@@ -30,7 +30,7 @@ function App() {
     setError(null);
   }, []);
 
-  const handleGenerate = useCallback(async (prompt: string) => {
+  const handleGenerate = useCallback(async (prompt: string, promptImages: ImageState[]) => {
     if (!currentImage) return;
 
     setIsLoading(true);
@@ -40,7 +40,7 @@ function App() {
     const fullPrompt = `IMPORTANT: The user's face, features, and expression must be preserved perfectly. Do not change their identity. With that rule in mind, apply the following edit: "${prompt}"`;
 
     try {
-      const result = await editImage(currentImage.base64, currentImage.mimeType, fullPrompt);
+      const result = await editImage(currentImage.base64, currentImage.mimeType, fullPrompt, promptImages);
       if (result.newImage) {
         const newHistory = history.slice(0, historyIndex + 1);
         setHistory([...newHistory, result.newImage]);

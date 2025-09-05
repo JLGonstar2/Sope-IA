@@ -24,23 +24,32 @@ interface EditResult {
 export const editImage = async (
   base64ImageData: string,
   mimeType: string,
-  prompt: string
+  prompt: string,
+  promptImages: ImageState[] = []
 ): Promise<EditResult> => {
   try {
+    const parts: any[] = [
+      {
+        inlineData: {
+          data: base64ImageData,
+          mimeType: mimeType,
+        },
+      },
+      {
+        text: prompt,
+      },
+      ...promptImages.map(img => ({
+        inlineData: {
+          data: img.base64,
+          mimeType: img.mimeType,
+        },
+      })),
+    ];
+
     const response = await ai.models.generateContent({
       model: model,
       contents: {
-        parts: [
-          {
-            inlineData: {
-              data: base64ImageData,
-              mimeType: mimeType,
-            },
-          },
-          {
-            text: prompt,
-          },
-        ],
+        parts: parts,
       },
       config: {
         responseModalities: [Modality.IMAGE, Modality.TEXT],
